@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="mjpeg_network_camera" type="streamed_camera.py" name="mjpeg_network_camera" output="screen" respawn="true"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find mjpeg_network_camera)/launch/mjpeg_network_camera.rviz"/>
+</launch> 

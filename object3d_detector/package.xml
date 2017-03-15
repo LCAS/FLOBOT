@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>object3d_detector</name>
+  <version>0.0.0</version>
+  <description>3D object detection in scenes scanned by 3D LiDAR.</description>
+  <maintainer email="zyan@lincoln.ac.uk">Zhi Yan</maintainer>
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  
+  <run_depend>roscpp</run_depend>
+  <run_depend>pcl_ros</run_depend>
+</package>
