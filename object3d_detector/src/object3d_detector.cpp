@@ -57,7 +57,9 @@ private:
   bool use_svm_model_;
   bool is_probability_model_;
   float svm_scale_range_[FEATURE_SIZE][2];
-  float x_lower_, x_upper_;
+  float x_lower_;
+  float x_upper_;
+  float human_probability_;
   
 public:
   Object3dDetector();
@@ -85,6 +87,7 @@ Object3dDetector::Object3dDetector() {
   private_nh.param<float>("z_limit_max", z_limit_max_, 2.0);
   private_nh.param<int>("cluster_size_min", cluster_size_min_, 5);
   private_nh.param<int>("cluster_size_max", cluster_size_max_, 30000);
+  private_nh.param<float>("human_probability", human_probability_, 0.7);
   
   /****** load a pre-trained svm model ******/
   private_nh.param<std::string>("model_file_name", model_file_name_, "");
@@ -488,7 +491,7 @@ void Object3dDetector::classification() {
       if(is_probability_model_) {
 	double prob_estimates[svm_model_->nr_class];
       	svm_predict_probability(svm_model_, svm_node_, prob_estimates);
-	if(prob_estimates[0] < 0.98)
+	if(prob_estimates[0] < human_probability_)
 	  continue;
       } else {
       	if(svm_predict(svm_model_, svm_node_) != 1)
