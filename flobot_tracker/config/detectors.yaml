@@ -14,15 +14,6 @@ bayes_people_tracker:
             matching_algorithm: "NN"                           # The algorthim to match different detections. NN = Nearest Neighbour, NNJPDA = NN Joint Probability Data Association
             seq_size: 5                                        # Minimum number of observations for new track creation
             seq_time: 0.2                                      # Minimum interval between observations for new track creation
-        rgbd_leg_detector:
-            topic: "/rgbd_leg_detector/poses"
-            observation_model: "CARTESIAN"
-            noise_params:
-                x: 0.5
-                y: 0.5
-            matching_algorithm: "NN"
-            seq_size: 5
-            seq_time: 0.2
         leg_detector:
             topic: "/to_pose_array/leg_detector"
             observation_model: "CARTESIAN"
@@ -36,8 +27,17 @@ bayes_people_tracker:
             topic: "/object3d_detector/poses"
             observation_model: "CARTESIAN"
             noise_params:
-                x: 0.2
-                y: 0.2
+                x: 0.1
+                y: 0.1
             matching_algorithm: "NN"
-            seq_size: 2
-            seq_time: 0.5
+            seq_size: 4
+            seq_time: 0.3
+        rgbd_leg_detector:
+            topic: "/rgbd_leg_detector/poses"
+            observation_model: "CARTESIAN"
+            noise_params:
+                x: 0.5
+                y: 0.5
+            matching_algorithm: "NN"
+            seq_size: 5
+            seq_time: 0.2
