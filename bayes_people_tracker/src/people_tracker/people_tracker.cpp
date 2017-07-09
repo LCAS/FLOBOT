@@ -362,7 +362,6 @@ void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
   for(int i = 0; i < poses.size(); i++) {
     bool new_pose = true;
     if(new_pose) {
-      //if(vars[i].position.x+vars[i].position.y < 1.0)
       previous_poses.push_back(boost::make_tuple(pids[i], vars[i], vels[i], poses[i]));
     }
   }
@@ -436,7 +435,6 @@ std::vector<double> PeopleTracker::cartesianToPolar(geometry_msgs::Point point) 
 }
 
 void PeopleTracker::detectorCallback(const geometry_msgs::PoseArray::ConstPtr &pta, std::string detector) {
-  //std::cerr << "[people_tacker] got " << pta->poses.size() << " poses, from " << detector << std::endl;
   // Publish an empty message to trigger callbacks even when there are no detections.
   // This can be used by nodes which might also want to know when there is no human detected.
   if(pta->poses.size() == 0) {
