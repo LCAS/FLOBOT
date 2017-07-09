@@ -34,7 +34,6 @@
 #include "people_tracker/flobot_tracking.h"
 #include "people_tracker/asso_exception.h"
 
-#define BASE_LINK "/base_link"
 #define INVALID_ID -1
 
 class PeopleTracker
@@ -62,7 +61,7 @@ class PeopleTracker
 			 std::vector<geometry_msgs::Pose> vars,
 			 std::vector<long> pids,
 			 ros::Publisher& pub);
-  void createVisualisation(std::vector<geometry_msgs::Pose> points,
+  void createVisualisation(std::vector<geometry_msgs::Pose> poses,
 			   std::vector<long> pids,
 			   ros::Publisher& pub);
   std::vector<double> cartesianToPolar(geometry_msgs::Point point);
@@ -224,6 +223,7 @@ class PeopleTracker
   ros::Publisher pub_marker;
   tf::TransformListener* listener;
   std::string target_frame;
+  std::string base_link;
   double tracker_frequency;
   bool publish_detections;
   unsigned long detect_seq;
