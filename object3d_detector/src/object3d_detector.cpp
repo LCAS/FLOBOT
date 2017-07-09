@@ -225,8 +225,6 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
  * f3 (6d): 3D covariance matrix of the cluster.
  * f4 (6d): the normalized moment of inertia tensor.
  * => Since both f3 and f4 are symmetric, we only use 6 elements from each as features.
- * => @todo f3 and f4 use "cloud" or "cloud_projected"?
- * => @todo computeCovarianceMatrixNormalized or computeCovarianceMatrix?
  * f5 (9d): 2D covariance matrix in 3 zones, which are the upper half, and the left and right lower halves.
  * f6 (98d): The normalized 2D histogram for the main plane, 14 × 7 bins.
  * f7 (45d): The normalized 2D histogram for the secondary plane, 9 × 5 bins.
@@ -407,7 +405,7 @@ void Object3dDetector::extractFeature(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, F
     pcl::computeCovarianceMatrixNormalized(*pc_projected, centroid, f.covariance_3d);
     // f4: The normalized moment of inertia tensor.
     computeMomentOfInertiaTensorNormalized(*pc_projected, f.moment_3d);
-    // Navarro et al. assume that a pedestrian is in an upright position,
+    // Navarro et al. assume that a pedestrian is in an upright position.
     //pcl::PointCloud<pcl::PointXYZI>::Ptr main_plane(new pcl::PointCloud<pcl::PointXYZI>), secondary_plane(new pcl::PointCloud<pcl::PointXYZI>);
     //computeProjectedPlane(pc, pca.getEigenVectors(), 2, centroid, main_plane);
     //computeProjectedPlane(pc, pca.getEigenVectors(), 1, centroid, secondary_plane);
