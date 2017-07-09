@@ -230,8 +230,6 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
  * f7 (45d): The normalized 2D histogram for the secondary plane, 9 × 5 bins.
  * f8 (20d): Slice feature for the cluster.
  * f9 (27d): Intensity.
- * @todo taking VLP-16's properties into account: distance_between_slice = f1(channels (16), accuracy, distance, angular) * f2(DistanceThreshold, ClusterTolerance)
- * @todo height, width, head area, ratio of body height and width, etc ...
  */
 
 void computeMomentOfInertiaTensorNormalized(pcl::PointCloud<pcl::PointXYZI> &pc, Eigen::Matrix3f &moment_3d) {
