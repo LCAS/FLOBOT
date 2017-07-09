@@ -1,8 +1,8 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
-#include <visualization_msgs/MarkerArray.h>
 #include <geometry_msgs/PoseArray.h>
+#include <visualization_msgs/MarkerArray.h>
 // PCL
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/extract_indices.h>
@@ -16,12 +16,11 @@
 #include "svm.h"
 
 typedef struct feature {
-  // for labeling and visualization
-  int id;
+  /*** for visualization ***/
   Eigen::Vector4f centroid;
   Eigen::Vector4f min;
   Eigen::Vector4f max;
-  // for classification
+  /*** for classification ***/
   int number_points;
   float min_distance;
   Eigen::Matrix3f covariance_3d;
@@ -37,13 +36,14 @@ static const int FEATURE_SIZE = 61;
 
 class Object3dDetector {
 private:
+  /*** Publishers and Subscribers ***/
   ros::NodeHandle node_handle_;
   ros::Subscriber point_cloud_sub_;
-  ros::Publisher marker_array_pub_;
   ros::Publisher pose_array_pub_;
+  ros::Publisher marker_array_pub_;
   
-  std::string frame_id_;
   bool print_fps_;
+  std::string frame_id_;
   float z_limit_min_;
   float z_limit_max_;
   int cluster_size_min_;
@@ -60,6 +60,7 @@ private:
   float x_lower_;
   float x_upper_;
   float human_probability_;
+  bool human_size_limit_;
   
 public:
   Object3dDetector();
@@ -70,7 +71,7 @@ public:
   void extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc);
   void extractFeature(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, Feature &f,
 		      Eigen::Vector4f &min, Eigen::Vector4f &max, Eigen::Vector4f &centroid);
-  void saveFeatureSVM(Feature &f, struct svm_node *x);
+  void saveFeature(Feature &f, struct svm_node *x);
   void classification();
 };
 
@@ -82,12 +83,13 @@ Object3dDetector::Object3dDetector() {
   pose_array_pub_ = private_nh.advertise<geometry_msgs::PoseArray>("poses", 100);
   
   private_nh.param<std::string>("frame_id", frame_id_, "velodyne");
-  private_nh.param<bool>("show_fps", print_fps_, true);
+  private_nh.param<bool>("print_fps", print_fps_, false);
   private_nh.param<float>("z_limit_min", z_limit_min_, -0.8);
-  private_nh.param<float>("z_limit_max", z_limit_max_, 2.0);
+  private_nh.param<float>("z_limit_max", z_limit_max_, 1.2);
   private_nh.param<int>("cluster_size_min", cluster_size_min_, 5);
   private_nh.param<int>("cluster_size_max", cluster_size_max_, 30000);
   private_nh.param<float>("human_probability", human_probability_, 0.7);
+  private_nh.param<bool>("human_size_limit", human_size_limit_, false);
   
   /****** load a pre-trained svm model ******/
   private_nh.param<std::string>("model_file_name", model_file_name_, "");
@@ -193,26 +195,28 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
       ec.setIndices(indices_array_ptr);
       ec.extract(cluster_indices);
       
-      for(std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it) {
-      	pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZI>);
+      for(std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); it++) {
+      	pcl::PointCloud<pcl::PointXYZI>::Ptr cluster(new pcl::PointCloud<pcl::PointXYZI>);
       	for(std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
-      	  cloud_cluster->points.push_back(pc->points[*pit]);
-      	cloud_cluster->width = cloud_cluster->size();
-      	cloud_cluster->height = 1;
-      	cloud_cluster->is_dense = true;
+      	  cluster->points.push_back(pc->points[*pit]);
+      	cluster->width = cluster->size();
+      	cluster->height = 1;
+      	cluster->is_dense = true;
 	
       	Eigen::Vector4f min, max, centroid;
-      	pcl::getMinMax3D(*cloud_cluster, min, max);
-      	pcl::compute3DCentroid(*cloud_cluster, centroid);
+      	pcl::getMinMax3D(*cluster, min, max);
+      	pcl::compute3DCentroid(*cluster, centroid);
 	
       	// Size limitation is not reasonable, but it can increase fps.
-      	if(max[0]-min[0] > 0.2 && max[0]-min[0] < 1.0 &&
-      	   max[1]-min[1] > 0.2 && max[1]-min[1] < 1.0 &&
-      	   max[2]-min[2] > 0.5 && max[2]-min[2] < 2.0) {
-      	  Feature f;
-      	  extractFeature(cloud_cluster, f, min, max, centroid);
-      	  features_.push_back(f);
-      	}
+      	if(human_size_limit_ &&
+	   (max[0]-min[0] < 0.2 || max[0]-min[0] > 1.0 ||
+	    max[1]-min[1] < 0.2 || max[1]-min[1] > 1.0 ||
+	    max[2]-min[2] < 0.5 || max[2]-min[2] > 2.0)) 
+	  continue;
+	
+	Feature f;
+	extractFeature(cluster, f, min, max, centroid);
+	features_.push_back(f);
       }
     }
   }
@@ -230,11 +234,13 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
  * f7 (45d): The normalized 2D histogram for the secondary plane, 9 × 5 bins.
  * f8 (20d): Slice feature for the cluster.
  * f9 (27d): Intensity.
+ * @todo taking VLP-16's properties into account: distance_between_slice = f1(channels (16), accuracy, distance, angular) * f2(DistanceThreshold, ClusterTolerance)
+ * @todo height, width, head area, ratio of body height and width, etc ...
  */
 
 void computeMomentOfInertiaTensorNormalized(pcl::PointCloud<pcl::PointXYZI> &pc, Eigen::Matrix3f &moment_3d) {
   moment_3d.setZero();
-  for(size_t i = 0; i < pc.size(); ++i) {
+  for(size_t i = 0; i < pc.size(); i++) {
     moment_3d(0,0) += pc[i].y*pc[i].y+pc[i].z*pc[i].z;
     moment_3d(0,1) -= pc[i].x*pc[i].y;
     moment_3d(0,2) -= pc[i].x*pc[i].z;
@@ -257,7 +263,7 @@ void computeProjectedPlane(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, Eigen::Matri
   coefficients[2] = eigenvectors(2,axe);
   coefficients[3] = 0;
   coefficients[3] = -1 * coefficients.dot(centroid);
-  for(size_t i = 0; i < pc->size(); ++i) {
+  for(size_t i = 0; i < pc->size(); i++) {
     float distance_to_plane =
       coefficients[0] * pc->points[i].x +
       coefficients[1] * pc->points[i].y +
@@ -276,7 +282,7 @@ void compute3ZoneCovarianceMatrix(pcl::PointCloud<pcl::PointXYZI>::Ptr plane, Ei
   pcl::PointCloud<pcl::PointXYZI>::Ptr zone_decomposed[3];
   for(int i = 0; i < 3; i++)
     zone_decomposed[i].reset(new pcl::PointCloud<pcl::PointXYZI>);
-  for(size_t i = 0; i < plane->size(); ++i) {
+  for(size_t i = 0; i < plane->size(); i++) {
     if(plane->points[i].z >= mean(2)) { // upper half
       zone_decomposed[0]->points.push_back(plane->points[i]);
     } else {
@@ -305,8 +311,8 @@ void computeHistogramNormalized(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int hor
   horiz_itv = (max[0]-min[0]>max[1]-min[1]) ? (max[0]-min[0])/horiz_bins : (max[1]-min[1])/horiz_bins;
   verti_itv = (max[2] - min[2])/verti_bins;
   
-  for(int i = 0; i < horiz_bins; ++i) {
-    for(int j = 0; j < verti_bins; ++j) {
+  for(int i = 0; i < horiz_bins; i++) {
+    for(int j = 0; j < verti_bins; j++) {
       if(max[0]-min[0] > max[1]-min[1]) {
 	min_box << min[0]+horiz_itv*i, min[1], min[2]+verti_itv*j, 0;
 	max_box << min[0]+horiz_itv*(i+1), max[1], min[2]+verti_itv*(j+1), 0;
@@ -328,16 +334,16 @@ void computeSlice(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int n, float *slice) 
   pcl::PointCloud<pcl::PointXYZI>::Ptr blocks[n];
   float itv = (pc_max[2] - pc_min[2]) / n;
   if(itv > 0) {
-    for(int i = 0; i < n; ++i) {
+    for(int i = 0; i < n; i++) {
       blocks[i].reset(new pcl::PointCloud<pcl::PointXYZI>);
     }
-    for(unsigned int i = 0, j; i < pc->size(); ++i) {
+    for(unsigned int i = 0, j; i < pc->size(); i++) {
       j = std::min((n-1), (int)((pc->points[i].z - pc_min[2]) / itv));
       blocks[j]->points.push_back(pc->points[i]);
     }
     
     Eigen::Vector4f block_min, block_max;
-    for(int i = 0; i < n; ++i) {
+    for(int i = 0; i < n; i++) {
       if(blocks[i]->size() > 0) {
 	pcl::getMinMax3D(*blocks[i], block_min, block_max);
       } else {
@@ -348,7 +354,7 @@ void computeSlice(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int n, float *slice) 
       slice[i*2+1] = block_max[1] - block_min[1];
     }
   } else {
-    for(int i = 0; i < n; ++i)
+    for(int i = 0; i < n*2; i++)
       slice[i] = 0;
   }
 }
@@ -356,17 +362,17 @@ void computeSlice(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int n, float *slice) 
 void computeIntensity(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int bins, float *intensity) {
   float sum = 0, mean = 0, sum_dev = 0;
   float min = FLT_MAX, max = -FLT_MAX;
-  for(int i = 0; i < 27; ++i)
+  for(int i = 0; i < 27; i++)
     intensity[i] = 0;
   
-  for(size_t i = 0; i < pc->size(); ++i) {
+  for(size_t i = 0; i < pc->size(); i++) {
     sum += pc->points[i].intensity;
     min = std::min(min, pc->points[i].intensity);
     max = std::max(max, pc->points[i].intensity);
   }
   mean = sum / pc->size();
   
-  for(size_t i = 0; i < pc->size(); ++i) {
+  for(size_t i = 0; i < pc->size(); i++) {
     sum_dev += (pc->points[i].intensity-mean)*(pc->points[i].intensity-mean);
     int ii = std::min(float(bins-1), std::floor((pc->points[i].intensity-min)/((max-min)/bins)));
     intensity[ii]++;
@@ -377,7 +383,6 @@ void computeIntensity(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int bins, float *
 
 void Object3dDetector::extractFeature(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, Feature &f,
 				      Eigen::Vector4f &min, Eigen::Vector4f &max, Eigen::Vector4f &centroid) {
-  f.id = features_.size();
   f.centroid = centroid;
   f.min = min;
   f.max = max;
@@ -388,7 +393,7 @@ void Object3dDetector::extractFeature(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, F
     // f2: The minimum distance to the cluster.
     f.min_distance = FLT_MAX;
     float d2; //squared Euclidean distance
-    for(int i = 0; i < pc->size(); ++i) {
+    for(int i = 0; i < pc->size(); i++) {
       d2 = pc->points[i].x*pc->points[i].x + pc->points[i].y*pc->points[i].y + pc->points[i].z*pc->points[i].z;
       if(f.min_distance > d2)
 	f.min_distance = d2;
@@ -419,7 +424,7 @@ void Object3dDetector::extractFeature(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, F
   }
 }
 
-void Object3dDetector::saveFeatureSVM(Feature &f, struct svm_node *x) {
+void Object3dDetector::saveFeature(Feature &f, struct svm_node *x) {
   x[0].index  = 1;  x[0].value  = f.number_points; // libsvm indices start at 1
   x[1].index  = 2;  x[1].value  = f.min_distance;
   x[2].index  = 3;  x[2].value  = f.covariance_3d(0,0);
@@ -468,7 +473,7 @@ void Object3dDetector::classification() {
   
   for(std::vector<Feature>::iterator it = features_.begin(); it != features_.end(); ++it) {
     if(use_svm_model_) {
-      saveFeatureSVM(*it, svm_node_);
+      saveFeature(*it, svm_node_);
       //std::cerr << "test_id = " << it->id << ", number_points = " << it->number_points << ", min_distance = " << it->min_distance << std::endl;
       
       // scale data
@@ -499,7 +504,7 @@ void Object3dDetector::classification() {
     marker.header.stamp = ros::Time::now();
     marker.header.frame_id = frame_id_;
     marker.ns = "object3d";
-    marker.id = it->id;
+    marker.id = it-features_.begin();
     marker.type = visualization_msgs::Marker::LINE_LIST;
     geometry_msgs::Point p[24];
     p[0].x = it->max[0]; p[0].y = it->max[1]; p[0].z = it->max[2];
