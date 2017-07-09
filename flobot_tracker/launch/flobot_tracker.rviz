@@ -25,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: HOKUYO UTM
+    SyncSource: Velodyne VLP-16
 Visualization Manager:
   Class: ""
   Displays:
@@ -33,7 +33,7 @@ Visualization Manager:
       Cell Size: 1
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.03
         Value: Lines
@@ -46,133 +46,33 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        back_sonar:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_rgb_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_sonar:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        jay_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        laser:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_left_axle:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_left_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_right_axle:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_right_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_back_right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_left_axle:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_left_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_right_axle:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_right_hub:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        p3at_front_right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        top_plate:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        velodyne:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: P3AT
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Angle Tolerance: 0.1
       Class: rviz/Odometry
       Color: 0; 85; 255
-      Enabled: true
+      Enabled: false
       Keep: 100
       Length: 1
       Name: Odometry
       Position Tolerance: 0.1
       Topic: /pose
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -188,7 +88,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 173
+      Max Intensity: 202
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: Velodyne VLP-16
@@ -198,7 +98,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.01
       Style: Flat Squares
-      Topic: /velodyne_points
+      Topic: /scan_velodyne
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -257,7 +157,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -274,7 +174,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Class: rviz/Image
       Enabled: false
       Image Topic: /camera_kodak_sp360/image
@@ -288,13 +188,13 @@ Visualization Manager:
       Unreliable: false
       Value: false
     - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /visualization_marker
       Name: Laser Leg
       Namespaces:
-        PEOPLE: true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: false
       Marker Topic: /rgbd_leg_detector/markers
@@ -308,7 +208,7 @@ Visualization Manager:
       Marker Topic: /object3d_detector/markers
       Name: 3D Object
       Namespaces:
-        {}
+        object3d: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -316,14 +216,13 @@ Visualization Manager:
       Marker Topic: /people_tracker/marker_array
       Name: NB Tracker
       Namespaces:
-        people_id: true
-        people_trajectory: true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: vehicle
     Frame Rate: 30
   Name: root
   Tools:
@@ -344,22 +243,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 12.5654
+      Distance: 8.74523
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0991583
-        Y: -0.0691393
-        Z: 1.78738
+        X: 1.56495
+        Y: 2.17245
+        Z: 1.33257
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.534798
+      Pitch: 0.389798
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.18039
+      Yaw: 5.55358
     Saved: ~
 Window Geometry:
   Displays:
