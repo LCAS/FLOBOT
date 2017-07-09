@@ -20,8 +20,9 @@ PeopleTracker::PeopleTracker() : detect_seq(0), marker_seq(0) {
   // Use a private node handle so that multiple instances of the node can be run simultaneously
   // while using different parameters.
   ros::NodeHandle private_node_handle("~");
-  private_node_handle.param("target_frame", target_frame, std::string("/base_link"));
-  private_node_handle.param("traker_frequency", tracker_frequency, double(30.0));
+  private_node_handle.param("base_link", base_link, std::string("base_link"));
+  private_node_handle.param("target_frame", target_frame, std::string("base_link"));
+  private_node_handle.param("tracker_frequency", tracker_frequency, double(30.0));
   parseParams(private_node_handle);
   
   // Create a status callback.
@@ -194,9 +195,9 @@ void PeopleTracker::trackingThread() {
     
     if(ppl.size()) {
       geometry_msgs::Pose closest_person_point;
-      std::vector<geometry_msgs::Pose> pose;
-      std::vector<geometry_msgs::Pose> vel;
-      std::vector<geometry_msgs::Pose> var;
+      std::vector<geometry_msgs::Pose> poses;
+      std::vector<geometry_msgs::Pose> vels;
+      std::vector<geometry_msgs::Pose> vars;
       std::vector<std::string> uuids;
       std::vector<long> pids;
       std::vector<double> distances;
@@ -205,9 +206,9 @@ void PeopleTracker::trackingThread() {
       double angle;
       
       for(std::map<long, std::vector<geometry_msgs::Pose> >::const_iterator it = ppl.begin(); it != ppl.end(); ++it) {
-	pose.push_back(it->second[0]);
-	vel.push_back(it->second[1]);
-	var.push_back(it->second[2]);
+	poses.push_back(it->second[0]);
+	vels.push_back(it->second[1]);
+	vars.push_back(it->second[2]);
 	uuids.push_back(generateUUID(startup_time_str, it->first));
 	pids.push_back(it->first);
 	
@@ -218,11 +219,11 @@ void PeopleTracker::trackingThread() {
 	poseInTargetCoords.pose = it->second[0];
 	
 	//Find closest person and get distance and angle
-	if(strcmp(target_frame.c_str(), BASE_LINK)) {
+	if(strcmp(target_frame.c_str(), base_link.c_str())) {
 	  try {
-	    ROS_DEBUG("Transforming received position into %s coordinate system.", BASE_LINK);
-	    listener->waitForTransform(poseInTargetCoords.header.frame_id, BASE_LINK, poseInTargetCoords.header.stamp, ros::Duration(3.0));
-	    listener->transformPose(BASE_LINK, ros::Time(0), poseInTargetCoords, poseInTargetCoords.header.frame_id, poseInRobotCoords);
+	    ROS_DEBUG("Transforming received position into %s coordinate system.", base_link.c_str());
+	    listener->waitForTransform(poseInTargetCoords.header.frame_id, base_link, poseInTargetCoords.header.stamp, ros::Duration(1.0));
+	    listener->transformPose(base_link, ros::Time(0), poseInTargetCoords, poseInTargetCoords.header.frame_id, poseInRobotCoords);
 	  } catch(tf::TransformException ex) {
 	    ROS_WARN("Failed transform: %s", ex.what());
 	    continue;
@@ -242,13 +243,13 @@ void PeopleTracker::trackingThread() {
       }
       
       if(pub_detect.getNumSubscribers() || pub_pose.getNumSubscribers() || pub_pose_array.getNumSubscribers() || pub_people.getNumSubscribers())
-	publishDetections(time_sec, closest_person_point, pose, vel, uuids, distances, angles, min_dist, angle);
+	publishDetections(time_sec, closest_person_point, poses, vels, uuids, distances, angles, min_dist, angle);
       
       if(pub_marker.getNumSubscribers())
-	createVisualisation(pose, pids, pub_marker);
+	createVisualisation(poses, pids, pub_marker);
       
       //if(pub_trajectory.getNumSubscribers())
-	publishTrajectory(pose, vel, var, pids, pub_trajectory);
+      publishTrajectory(poses, vels, vars, pids, pub_trajectory);
     }
     fps.sleep();
   }
@@ -316,6 +317,29 @@ void PeopleTracker::publishDetections(people_msgs::People msg) {
   pub_people.publish(msg);
 }
 
+//@todo analyze vels law for kids or animals tracking.
+void PN_experts(geometry_msgs::PoseArray &variance, geometry_msgs::PoseArray &velocity, geometry_msgs::PoseArray &trajectory) {
+  float path_length = 0.0;
+  for(int i = 1; i < trajectory.poses.size(); i++) {
+    path_length += hypot(trajectory.poses[i].position.x-trajectory.poses[i-1].position.x,
+			 trajectory.poses[i].position.y-trajectory.poses[i-1].position.y);
+  }
+  float sum_velocity = 0.0;
+  for(int i = 0; i < velocity.poses.size(); i++)
+    sum_velocity += fabs(velocity.poses[i].position.x+velocity.poses[i].position.y);
+  float avg_velocity = sum_velocity / velocity.poses.size();
+  float sum_variance = 0.0;
+  for(int i = 0; i < variance.poses.size(); i++)
+    sum_variance += variance.poses[i].position.x+variance.poses[i].position.y;
+  float avg_variance = sum_variance / variance.poses.size();
+  //std::cerr << "path_length = " << path_length << ", avg_velocity = " << avg_velocity << ", avg_variance = " << avg_variance << std::endl;
+  // @todo rosparams: pexpert_min_dist_, pexpert_min_vel_, pexpert_max_vel_, nexpert_min_var
+  if(path_length >= 2.0 && avg_velocity >= 0.2 && avg_velocity <= 1.4)
+    trajectory.header.frame_id = "human_trajectory";
+  if(path_length < 0.2 && avg_velocity < 0.2 && avg_variance < 0.02)
+    trajectory.header.frame_id = "static_trajectory";
+}
+
 void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
 				      std::vector<geometry_msgs::Pose> vels,
 				      std::vector<geometry_msgs::Pose> vars,
@@ -361,7 +385,14 @@ void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
   /*** add new coming poses to the previous_poses list ***/  
   for(int i = 0; i < poses.size(); i++) {
     bool new_pose = true;
+    for(int j = 0; j < previous_poses.size(); j++) {
+      if(poses[i].position.z >= 0.0 && boost::get<3>(previous_poses[j]).position.z == poses[i].position.z) {
+	new_pose = false;
+	break;
+      }
+    }
     if(new_pose) {
+      //if(vars[i].position.x+vars[i].position.y < 1.0)
       previous_poses.push_back(boost::make_tuple(pids[i], vars[i], vels[i], poses[i]));
     }
   }
@@ -435,6 +466,8 @@ std::vector<double> PeopleTracker::cartesianToPolar(geometry_msgs::Point point) 
 }
 
 void PeopleTracker::detectorCallback(const geometry_msgs::PoseArray::ConstPtr &pta, std::string detector) {
+  //std::cerr << "[people_tacker] got " << pta->poses.size() << " poses, from " << detector << std::endl;
+  
   // Publish an empty message to trigger callbacks even when there are no detections.
   // This can be used by nodes which might also want to know when there is no human detected.
   if(pta->poses.size() == 0) {
@@ -462,12 +495,12 @@ void PeopleTracker::detectorCallback(const geometry_msgs::PoseArray::ConstPtr &p
     try {
       // Transform into given traget frame. Default /map
       ROS_DEBUG("Transforming received position into %s coordinate system.", target_frame.c_str());
-      listener->waitForTransform(poseInCamCoords.header.frame_id, target_frame, poseInCamCoords.header.stamp, ros::Duration(3.0));
+      listener->waitForTransform(poseInCamCoords.header.frame_id, target_frame, poseInCamCoords.header.stamp, ros::Duration(1.0));
       listener->transformPose(target_frame, ros::Time(0), poseInCamCoords, poseInCamCoords.header.frame_id, poseInTargetCoords);
       
       // @todo use http://wiki.ros.org/pose_publisher
       tf::StampedTransform transform;
-      listener->lookupTransform(target_frame, BASE_LINK, ros::Time(0), transform);
+      listener->lookupTransform(target_frame, base_link, ros::Time(0), transform);
       robotPoseInTargetCoords.position.x = transform.getOrigin().getX();
       robotPoseInTargetCoords.position.y = transform.getOrigin().getY();
       robotPoseInTargetCoords.position.z = transform.getOrigin().getZ();
