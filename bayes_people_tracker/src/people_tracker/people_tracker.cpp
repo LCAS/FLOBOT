@@ -361,17 +361,7 @@ void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
   
   /*** add new coming poses to the previous_poses list ***/  
   for(int i = 0; i < poses.size(); i++) {
-    bool new_pose = true;
-    for(int j = 0; j < previous_poses.size(); j++) {
-      if(poses[i].position.z >= 0.0 && boost::get<3>(previous_poses[j]).position.z == poses[i].position.z) {
-	new_pose = false;
-	break;
-      }
-    }
-    if(new_pose) {
-      //if(vars[i].position.x+vars[i].position.y < 1.0)
-      previous_poses.push_back(boost::make_tuple(pids[i], vars[i], vels[i], poses[i]));
-    }
+    previous_poses.push_back(boost::make_tuple(pids[i], vars[i], vels[i], poses[i]));
   }
 }
 
