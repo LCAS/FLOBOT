@@ -317,29 +317,6 @@ void PeopleTracker::publishDetections(people_msgs::People msg) {
   pub_people.publish(msg);
 }
 
-//@todo analyze vels law for kids or animals tracking.
-void PN_experts(geometry_msgs::PoseArray &variance, geometry_msgs::PoseArray &velocity, geometry_msgs::PoseArray &trajectory) {
-  float path_length = 0.0;
-  for(int i = 1; i < trajectory.poses.size(); i++) {
-    path_length += hypot(trajectory.poses[i].position.x-trajectory.poses[i-1].position.x,
-			 trajectory.poses[i].position.y-trajectory.poses[i-1].position.y);
-  }
-  float sum_velocity = 0.0;
-  for(int i = 0; i < velocity.poses.size(); i++)
-    sum_velocity += fabs(velocity.poses[i].position.x+velocity.poses[i].position.y);
-  float avg_velocity = sum_velocity / velocity.poses.size();
-  float sum_variance = 0.0;
-  for(int i = 0; i < variance.poses.size(); i++)
-    sum_variance += variance.poses[i].position.x+variance.poses[i].position.y;
-  float avg_variance = sum_variance / variance.poses.size();
-  //std::cerr << "path_length = " << path_length << ", avg_velocity = " << avg_velocity << ", avg_variance = " << avg_variance << std::endl;
-  // @todo rosparams: pexpert_min_dist_, pexpert_min_vel_, pexpert_max_vel_, nexpert_min_var
-  if(path_length >= 2.0 && avg_velocity >= 0.2 && avg_velocity <= 1.4)
-    trajectory.header.frame_id = "human_trajectory";
-  if(path_length < 0.2 && avg_velocity < 0.2 && avg_variance < 0.02)
-    trajectory.header.frame_id = "static_trajectory";
-}
-
 void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
 				      std::vector<geometry_msgs::Pose> vels,
 				      std::vector<geometry_msgs::Pose> vars,
