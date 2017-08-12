@@ -36,7 +36,7 @@ using namespace Models;
 typedef UKFilter Filter;
 const int numOfTarget = 3;	// x 2
 const association_t alg = NNJPDA;
-const observ_model_t om_flag = POLAR;
+const observ_model_t om_flag = CARTESIAN;
 
 static double getTime()
 {

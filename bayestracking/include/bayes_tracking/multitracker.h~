@@ -20,6 +20,8 @@
 #include "bayes_tracking/jpda.h"
 #include <float.h>
 
+//#define ONLINE_LEARNING
+
 using namespace Bayesian_filter;
 
 namespace MTRK {
@@ -58,6 +60,10 @@ namespace MTRK {
     typedef struct {
       unsigned long id;
       FilterType* filter;
+#ifdef ONLINE_LEARNING
+      string pose_id;
+      string detector_name;
+#endif
     } filter_t;
     
   private:
@@ -322,6 +328,10 @@ namespace MTRK {
 	      FilterType* filter;
 	      if (si->size() >= seqSize && initialize(filter, *si, om_flag)) {  // there's a minimum number of sequential observations
 		addFilter(filter);
+#ifdef ONLINE_LEARNING
+		m_filters.back().pose_id = si->back().flag;
+		m_filters.back().detector_name = si->back().name;
+#endif
 		// remove sequence
 		si = m_sequences.erase(si);
 		matched = true;
@@ -359,6 +369,10 @@ namespace MTRK {
 	typename std::map<int, int>::iterator ai, aiEnd = m_assignments.end();
 	for (ai = m_assignments.begin(); ai != aiEnd; ai++) {
 	  m_filters[ai->second].filter->observe(om, m_observations[ai->first].vec);
+#ifdef ONLINE_LEARNING
+	  m_filters[ai->second].pose_id = m_observations[ai->first].flag;
+	  m_filters[ai->second].detector_name = m_observations[ai->first].name;
+#endif
 	}
       }
   };
