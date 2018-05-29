@@ -12,6 +12,7 @@
 
   <!-- FLOBOT 3D Object Detector -->
   <node pkg="object3d_detector" type="object3d_detector" name="object3d_detector" output="screen" respawn="false">
+    <param name="print_fps" value="true"/>
     <param name="model_file_name" type="string" value="$(find object3d_detector)/libsvm/pedestrian.model"/>
     <param name="range_file_name" type="string" value="$(find object3d_detector)/libsvm/pedestrian.range"/>
   </node>
