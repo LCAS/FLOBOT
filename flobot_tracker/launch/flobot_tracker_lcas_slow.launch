@@ -16,19 +16,19 @@
     <param name="range_file_name" type="string" value="$(find object3d_detector)/libsvm/pedestrian.range"/>
   </node>
   
-  <!-- STRANDS Ground Plane Estimation
+  <!-- STRANDS Ground Plane Estimation -->
   <include file="$(find ground_plane_estimation)/launch/ground_plane_estimated.launch">
     <arg name="camera_namespace" value="/camera_2"/>
     <arg name="depth_image" default="/depth/image"/>
   </include>
-  -->
-  <!-- STRANDS Upper Body Detector
+  
+  <!-- STRANDS Upper Body Detector -->
   <include file="$(find upper_body_detector)/launch/upper_body_detector.launch">
     <arg name="camera_namespace" value="/camera_2"/>
     <arg name="depth_image" default="/depth/image"/>
     <arg name="rgb_image" default="/rgb/image_rect_color"/>
   </include>
-  -->
+  
   
   <!-- ROS leg detector
        <include file="$(find detector_msg_to_pose_array)/launch/to_pose_array.launch"/>
