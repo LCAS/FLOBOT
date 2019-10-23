@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -9,6 +9,7 @@
   
   <body>
     <h1 id="logo">
+      <a href="http://www.flobot.eu/"><img alt="flobot_logo.png" src="images/flobot_logo.png"/></a>&nbsp;&nbsp;&nbsp;
       <a href="https://www.tuwien.ac.at/"><img alt="tuw_logo.png" src="images/tuw_logo.png"/></a>&nbsp;&nbsp;&nbsp;
       <a href="https://www.lincoln.ac.uk/"><img alt="uol_logo.png" src="images/uol_logo.png"/></a>&nbsp;&nbsp;&nbsp;
       <a href="https://lcas.lincoln.ac.uk/wp/"><img alt="lcas_logo.png" src="images/lcas_logo.png"/></a>      
@@ -16,67 +17,63 @@
     </h1>
     
     <p style="text-align: left">Collected by our very own FLOBOT (FLOor washing RObot)</p>
-    
-    <p style="text-align: left">
-      <a href="https://youtu.be/mbilkt5tfoo"><img alt="flobot.jpg" height="315" src="images/flobot.jpg"></a>
-    </p>
+    <p style="text-align: left"><a href="https://youtu.be/mbilkt5tfoo"><img alt="flobot.jpg" height="315" src="images/flobot.jpg"></a></p>
     
     <h2>Description</h2>
-    <p>FLOBOT is an advanced autonomous floor scrubber. This dataset was collected with FLOBOT including data of five sensors for environment perception as well as the robot odometry. 
-      Data collection was carried out in real environments including airport, warehouse, hospital and supermarket.
-      ... blablabla ...
+    <p>This dataset was collected with FLOBOT, an advanced autonomous floor scrubber, includes data from four sensors for environment perception as well as the robot pose in the world reference frame.
+      Specifically, FLOBOT replies on a 3D lidar and a RGB-D camera for human detection and tracking, and a second RGB-D and a stereo camera for dirt and object detection.
+      Data collection was performed in four public places, two in Italy and two in France, in FOLBOT working mode with the corresponding testing procedures for final project validation.
       For a quick overview, please refer to the following video.</p>
-    <div style="text-align: left"><iframe width="560" height="315" src="https://www.youtube.com/embed/d8TNc3vVMLA" frameborder="0" allowfullscreen></iframe></div>
+    <div style="text-align: left"><iframe width="560" height="315" src="https://www.youtube.com/embed/d8TNc3vVMLA" allowfullscreen></iframe></div>
     
     <h2>Contributions</h2>
-    <p>This dataset provides:</p>
     <ol>
-      <li><a href="http://wiki.ros.org/">Robot Operating System (ROS)</a> <i>rosbag</i> files recording ... blablabla ...</li>
-      <li> with real prototype, in real environments such as airport, warehouse, hospital and supermarket.</li>
-      <li> Data annotation ... blablabla ...</li>
-      <li> baselines based on relevant state-of-the-art methods, for ... blablabla ... challenges.</li>
+      <li><a href="http://wiki.ros.org/">Robot Operating System (ROS)</a> <i>rosbag</i> files recorded from four sensors including a 3D lidar, two RGB-D cameras and a stereo camera, while all the sensory data are synchronized at the software level (i.e. timestamped by ROS), and the robot pose in the world reference frame are provided.</li>
+      <li>Data collection was carried out with the real FLOBOT prototype, in real environments including airport, warehouse, hospital and supermarket. While these public places are rarely to obtain permission to perform data collection especially with robots.</li>
+      <li>Annotation of pedestrian in 3D lidar, dirt and object in RGB-D camera are provided.</li>
+      <li>Baselines based on relevant state-of-the-art, i.e. for human, dirt and object detection, are provided.</li>
+      <li>Although not our main use, since the dataset provides robot odometry and TF tree rising up to "world", it is also suitable for the study of localization and mapping problems. Moreover, as our data involves many different and very characteristic public scenarios (i.e. airport, warehouse, hospital and supermarket), it is also suitable for semantic and contextual research.</li>
     </ol>
-    <p>Although not our main use, since the dataset provides robot odometry and TF tree rising up to "world", it is also suitable for the study of localization and mapping problems.
-      Moreover, as our data involves many different and very characteristic public scenarios (i.e. airport, warehouse, hospital and supermarket), it is also suitable for semantic mining of data and contextual research.</p>
     
     <h2>Citation</h2>
     <p>If you publish work based on, or using, this dataset, we would appreciate citations to the following:</p>
-    <p><font color="red">manuscript in preparation ...</font></p>
+    <p><b>manuscript in preparation ...</b></p>
     
     <h2>Recording platform</h2>
     <table>
       <tr>
-	<td><img alt="flobot_overview.jpg" height="315" src="images/flobot_overview.jpg"></td>
+	<td><img alt="flobot_sensors.jpg" height="315" src="images/flobot_sensors.jpg"></td>
 	<td>
 	  <ol>
 	    <li>Velodyne VLP-16 3D lidar
-	    <li>Xtion PRO LIVE RGB-D camera (forward facing)
-	    <li>Xtion PRO LIVE RGB-D camera (floor facing)
-	    <li>ZED stereo camera
-	    <li>Line laser
-	    <li>Laser projector for proactive safety module
-	    <li>Scrubber + squishee
-            <li>Wheel /Differential Drive
-	    <li>Front Wheel, Active Rotation control
-	  </ol>
+	    <li>Xtion PRO LIVE RGB-D camera (forward-facing for human detection)
+	    <li>Xtion PRO LIVE RGB-D camera (floor-facing for dirt and object detection)
+	    <li>ZED stereo camera (floor-facing for dirt and object detection)
+	    <li>SICK S300 2D lidar
+	    <li>OEM incremental measuring wheel encoder
+	    <li>Xsens MTi-30 IMU (inside of the robot)
+          </ol>
 	</td>
       </tr>
     </table> 
     
-    <h2>Challenges</h2>
-    <p>Many new research challenges have been introduced in this dataset, such as ... blablabla ...</p>
+    <h2>Recording environments</h2>
+    <p>
+      Four pilot sites were selected for the final FLOBOT validation, which led to this dataset.
+      These pilot sites descriptions are important in order to understand the requirements for each use case and accordingly design the FLOBOT robot and complete system.
+    </p>
     <table style="border-spacing: 20px; text-align: center;">
       <tr>
-	<td><img alt="supermarket_trolley.jpg" height="168" src="images/sloping_road.jpg"></td>
-	<td><img alt="shared_zone.jpg" height="168" src="images/shared_zone.jpg"></td>
-	<td><img alt="diversion.jpg" height="168" src="images/diversion.jpg"></td>
-	<td><img alt="roundabout.jpg" height="168" src="images/roundabout.jpg"></td>
+	<td><img alt="airport.jpg" height="168" src="images/airport.jpg"></td>
+	<td><img alt="warehouse.jpg" height="168" src="images/warehouse.jpg"></td>
+	<td><img alt="supermarket.jpg" height="168" src="images/supermarket.jpg"></td>
+	<td><img alt="hospital.jpg" height="168" src="images/hospital.jpg"></td>
       </tr>
       <tr>
-	<td>supermarket trolleys</td>
-	<td>shared zone</td>
-	<td>diversion</td>
-	<td>roundabout</td>
+	<td>Airport</td>
+	<td>Warehouse</td>
+	<td>Supermarket</td>
+	<td>Hospital</td>
       </tr>
     </table>
     
@@ -98,7 +95,7 @@
     </table>
     
     <h2>How to play</h2>
-
+    
     <p><i>roslaunch <a href="https://github.com/LCAS/FLOBOT/tree/baselines/flobot_dataset_play.launch">flobot_dataset_play.launch</a> bag:=path_to_your_rosbag</i></p>
     
     <h2>Baselines</h2>
@@ -112,25 +109,28 @@
 
     <h2>Related publications</h2>
     <ol>
-      <li>Zhi Yan, Tom Duckett, and Nicola Bellotto. <b>Online learning for 3D LiDAR-based human detection: Experimental analysis of point cloud clustering and classification methods</b>. <i> Autonomous Robots</i>, 2019. [<a href="publications/yz_bib.html#yz19auro">BibTeX</a> | <a href="https://rdcu.be/bODuU">PDF</a>]</li>
-      <li>Zhi Yan, Li Sun, Tom Duckett, and Nicola Bellotto. <b> Multisensor online transfer learning for 3D LiDAR-based human detection with a mobile robot</b>. In <i>Proceedings of the 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, Madrid, Spain, October 2018. [<a href="publications/yz_bib.html#yz18iros">BibTeX</a> | <a href="https://arxiv.org/abs/1801.04137">PDF</a> | <a href="https://github.com/LCAS/online_learning/tree/multisensor">Code</a> | <a href="https://lcas.lincoln.ac.uk/wp/research/data-sets-software/l-cas-multisensor-people-dataset/">Dataset</a>]</li>
-      <li>Li Sun, Zhi Yan, Sergi Molina Mellado, Marc Hanheide, and Tom Duckett. <b>3DOF pedestrian trajectory prediction learned from long-term autonomous mobile robot deployment data</b>. In <i>Proceedings of the 2018 IEEE International Conference on Robotics and Automation (ICRA)</i>, Brisbane, Australia, May 2018. [<a href="publications/yz_bib.html#ls18icra">BibTeX</a> | <a href="https://arxiv.org/abs/1710.00126">PDF</a> | <a href="https://lcas.lincoln.ac.uk/wp/3dof-pedestrian-trajectory-dataset/">Dataset</a> | <a href="https://youtu.be/STmc_g7PwtE">Video</a>]</li>
-      <li>Zhi Yan, Tom Duckett, and Nicola Bellotto. <b>Online learning for human classification in 3D LiDAR-based tracking</b>. In <i>Proceedings of the 2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, pages 864-871, Vancouver, Canada, September 2017. [<a href="publications/yz_bib.html#yz17iros">BibTeX</a> | <a href="publications/yz17iros.pdf">PDF</a> | <a href="https://github.com/LCAS/online_learning">Code</a> | <a href="https://lcas.lincoln.ac.uk/wp/research/data-sets-software/l-cas-3d-point-cloud-people-dataset/">Dataset</a> | <a href="https://youtu.be/bjztHV9rC-0">Video1</a> | <a href="https://youtu.be/rmPn7mWssto">Video2</a>]</li>
-      <li>Andreas Grünauer, Georg Halmetschlaeger-Funek, Johann Prankl, and Markus Vincze. <b>The Power of GMMs: Unsupervised Dirt Spot Detection for Industrial Floor Cleaning Robots</b>. In <i>Proceedings of Towards Autonomous Robotic Systems: 18th Annual Conference, (TAROS)</i>,  Guildford, UK, July 19–21, 2017 [<a href="NoBibtexYet">BibTeX</a> | <a href="https://www.researchgate.net/publication/318539021_The_Power_of_GMMs_Unsupervised_Dirt_Spot_Detection_for_Industrial_Floor_Cleaning_Robots">PDF</a> | <a href="NoCode">Code</a> | <a href="Dhttps://owncloud.tuwien.ac.at/index.php/s/4eydrOcCJrgwBFQ">Dataset</a>]</li>
-      <li>Simon Schreiberhuber, Thomas Mörwald, and Markus Vincze. <b>Bilateral Filters for quick 2.5D Plane Segmentation</b>. In <i>Proceedings of Austrian Association for Pattern Recognition OAGM</i>,  Vienna, AUT, May 10–12, 2017 [<a href="NoBibtexYet">BibTeX</a> | <a href="https://diglib.tugraz.at/download.php?id=5aaa459331014&location=browse">PDF</a> ]</li>
-      <li>Farhoud Malekghasemi, Georg Halmetschlaeger-Funek, and Markus Vincze. <b>Autonomous Extrinsic Calibration of a Depth Sensing Camera on Mobile Robots</b>. In <i>Proceedings of Austrian Robotics Workshop ARW</i>,  Innsbruck, AUT, May 17–18, 2018 [<a href="NoBibtexYet">BibTeX</a> | <a href="https://www.researchgate.net/publication/326635998_Autonomous_Extrinsic_Calibration_of_a_Depth_Sensing_Camera_on_Mobile_Robots">PDF</a> ]</li>
-      <li>Georg Halmetschlaeger-Funek, Markus Suchi, Martin Kampel, and Markus Vincze. <b>An Empirical Evaluation of Ten Depth Cameras: Bias, Precision, Lateral Noise, Different Lighting Conditions and Materials, and Multiple Sensor Setups in Indoor Environments</b>. In <i>IEEE Robotics Automation Magazine</i>, Pages 67-77, August 14, 2018 [<a href="NoBibtexYet">BibTeX</a> | <a href="https://ieeexplore.ieee.org/document/8436009">PDF</a> | <a href="https://www.acin.tuwien.ac.at/en/vision-for-robotics/software-tools/rgbd-sensor-tests/">Dataset</a> ]</li>
-      <li>Georg Halmetschlaeger-Funek, Johann Prankl, and Markus Vincze. <b>Towards Autonomous Auto Calibration of Unregistered RGB-D Setups: The Benefit of Plane Priors</b>. In <i>Proceedings of the 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, Brisbane, Australia, May 2018. [<a href="NoBibtexYet">BibTeX</a> | <a href="https://ieeexplore.ieee.org/document/8593715">PDF</a> ]</li>
+      <li>Zhi Yan, Tom Duckett, and Nicola Bellotto. <b>Online learning for 3D LiDAR-based human detection: Experimental analysis of point cloud clustering and classification methods</b>. <i> Autonomous Robots</i>, 2019. [<a href="https://yzrobot.github.io/publications/yz_bib.html#yz19auro">BibTeX</a> | <a href="https://rdcu.be/bODuU">PDF</a>]</li>
+      <li>Georg Halmetschlaeger-Funek, Markus Suchi, Martin Kampel, and Markus Vincze. <b>An empirical evaluation of ten depth cameras: Bias, precision, lateral noise, different lighting conditions and materials, and multiple sensor setups in indoor environments</b>. In <i>IEEE Robotics & Automation Magazine</i>, 2019. [<a href="https://ieeexplore.ieee.org/document/8436009">PDF</a> | <a href="https://www.acin.tuwien.ac.at/en/vision-for-robotics/software-tools/rgbd-sensor-tests/">Dataset</a>]</li>
+      <li>Zhi Yan, Li Sun, Tom Duckett, and Nicola Bellotto. <b> Multisensor online transfer learning for 3D LiDAR-based human detection with a mobile robot</b>. In <i>Proceedings of the 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, Madrid, Spain, October 2018. [<a href="https://yzrobot.github.io/publications/yz_bib.html#yz18iros">BibTeX</a> | <a href="https://arxiv.org/abs/1801.04137">PDF</a> | <a href="https://github.com/LCAS/online_learning/tree/multisensor">Code</a> | <a href="https://lcas.lincoln.ac.uk/wp/research/data-sets-software/l-cas-multisensor-people-dataset/">Dataset</a>]</li>
+      <li>Georg Halmetschlaeger-Funek, Johann Prankl, and Markus Vincze. <b>Towards autonomous auto calibration of unregistered RGB-D setups: The benefit of plane priors</b>. In <i>Proceedings of the 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, Madrid, Spain, October 2018. [<a href="https://ieeexplore.ieee.org/document/8593715">PDF</a>]</li>
+      <li>Li Sun, Zhi Yan, Sergi Molina Mellado, Marc Hanheide, and Tom Duckett. <b>3DOF pedestrian trajectory prediction learned from long-term autonomous mobile robot deployment data</b>. In <i>Proceedings of the 2018 IEEE International Conference on Robotics and Automation (ICRA)</i>, Brisbane, Australia, May 2018. [<a href="https://yzrobot.github.io/publications/yz_bib.html#ls18icra">BibTeX</a> | <a href="https://arxiv.org/abs/1710.00126">PDF</a> | <a href="https://lcas.lincoln.ac.uk/wp/3dof-pedestrian-trajectory-dataset/">Dataset</a> | <a href="https://youtu.be/STmc_g7PwtE">Video</a>]</li>
+      <li>Farhoud Malekghasemi, Georg Halmetschlaeger-Funek, and Markus Vincze. <b>Autonomous extrinsic calibration of a depth sensing camera on mobile robots</b>. In <i>Proceedings of the Austrian Robotics Workshop (ARW)</i>, Innsbruck, Austria, May 2018 [<a href="https://www.researchgate.net/publication/326635998_Autonomous_Extrinsic_Calibration_of_a_Depth_Sensing_Camera_on_Mobile_Robots">PDF</a>]</li>
+      <li>Zhi Yan, Tom Duckett, and Nicola Bellotto. <b>Online learning for human classification in 3D LiDAR-based tracking</b>. In <i>Proceedings of the 2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, pages 864-871, Vancouver, Canada, September 2017. [<a href="https://yzrobot.github.io/publications/yz_bib.html#yz17iros">BibTeX</a> | <a href="https://yzrobot.github.io/publications/yz17iros.pdf">PDF</a> | <a href="https://github.com/LCAS/online_learning">Code</a> | <a href="https://lcas.lincoln.ac.uk/wp/research/data-sets-software/l-cas-3d-point-cloud-people-dataset/">Dataset</a> | <a href="https://youtu.be/bjztHV9rC-0">Video1</a> | <a href="https://youtu.be/rmPn7mWssto">Video2</a>]</li>
+      <li>Andreas Gr&uuml;nauer, Georg Halmetschlaeger-Funek, Johann Prankl, and Markus Vincze. <b>The power of GMMs: Unsupervised dirt spot detection for industrial floor cleaning robots</b>. In <i>Proceedings of the Towards Autonomous Robotic Systems - 18th Annual Conference (TAROS)</i>, Guildford, UK, July 2017. [<a href="https://www.researchgate.net/publication/318539021_The_Power_of_GMMs_Unsupervised_Dirt_Spot_Detection_for_Industrial_Floor_Cleaning_Robots">PDF</a> | <a href="https://owncloud.tuwien.ac.at/index.php/s/4eydrOcCJrgwBFQ">Dataset</a>]</li>
+      <li>Simon Schreiberhuber, Thomas M&ouml;rwald, and Markus Vincze. <b>Bilateral filters for quick 2.5D plane segmentation</b>. In <i>Proceedings of the OAGM&ARW Joint Workshop</i>, Vienna, Austria, May 2017. [<a href="https://diglib.tugraz.at/download.php?id=5aaa459331014&location=browse">PDF</a>]</li>
     </ol> 
-
+    
     <h2>License</h2>
     <p>
       <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
       <br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
-      <br />Copyright (c) 2019 Simon Schreiberhuber, Georg Halmetschlager, Markus Vincze, Zhi Yan, Tom Duckett, and Nicola Bellotto.</a>.
+      <br />Copyright (c) 2019 Simon Schreiberhuber, Georg Halmetschlager, Markus Vincze, Zhi Yan, Tom Duckett, and Nicola Bellotto.
     </p>
     
     <h2>Funding</h2>
-    <p>This work was funded in part by the EU Horizon 2020 project <a href="http://www.flobot.eu/">FLOBOT</a>, H2020-ICT-2014-1, Grant agreement no.: 645376.</p>
+    <p>
+      <img alt="euflag.png" height="80" src="images/euflag.png"/>
+      <br />This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 645376 (<a href="http://www.flobot.eu/">FLOBOT</a>).
+    </p>
   </body>
 </html>
