@@ -10,7 +10,7 @@
   </node>
   
   <node pkg="nodelet" type="nodelet" name="cloud_nodelet" args="load velodyne_pointcloud/CloudNodelet velodyne_nodelet_manager" output="screen">
-    <param name="calibration" value="$(find object3d_detector)/config/vlp16.yaml"/>
+    <param name="calibration" value="$(find velodyne_pointcloud)/params/VLP16db.yaml"/>
     <param name="min_range" value="0.4"/>
     <param name="max_range" value="130.0"/>
   </node>
