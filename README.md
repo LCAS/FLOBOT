@@ -1,9 +1,5 @@
 # FLOBOT
 
-[![Build Status](https://travis-ci.org/yzrobot/online_learning.svg?branch=master)](https://travis-ci.org/yzrobot/online_learning)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85d6393df92749238fb740e173be5bfa)](https://www.codacy.com/app/yzrobot/online_learning?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yzrobot/online_learning&amp;utm_campaign=Badge_Grade)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 [FLOBOT](http://www.flobot.eu/) is an EU funded Horizon 2020 project. The University of Lincoln is responsible for developing the human tracking for safety software module, and leadnig the environment reasoning and learning software module. In this repository, you find these two modules as a whole, and specifically:
 
 * [bayestracking](\bayestracking) is a library originally developed by [Dr. Nicola Bellotto](http://webpages.lincoln.ac.uk/nbellotto/).
