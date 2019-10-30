@@ -20,19 +20,19 @@
     <p style="text-align: left"><a href="https://youtu.be/mbilkt5tfoo"><img alt="flobot.jpg" height="315" src="images/flobot.jpg"></a></p>
     
     <h2>Description</h2>
-    <p>This dataset was collected with FLOBOT, an advanced autonomous floor scrubber, includes data from four sensors for environment perception as well as the robot pose in the world reference frame.
-      Specifically, FLOBOT replies on a 3D lidar and a RGB-D camera for human detection and tracking, and a second RGB-D and a stereo camera for dirt and object detection.
-      Data collection was performed in four public places, two in Italy and two in France, in FOLBOT working mode with the corresponding testing procedures for final project validation.
+    <p>This dataset was collected with FLOBOT - an advanced autonomous floor scrubber - includes data from four different sensors for environment perception, as well as the robot pose in the world reference frame.
+      Specifically, FLOBOT relies on a 3D lidar and a RGB-D camera for human detection and tracking, and a second RGB-D and a stereo camera for dirt and object detection.
+      Data collection was performed in three public places, one in Italy and two in France, in FOLBOT working mode with the corresponding testing procedures for final project validation.
       For a quick overview, please refer to the following video.</p>
     <div style="text-align: left"><iframe width="560" height="315" src="https://www.youtube.com/embed/d8TNc3vVMLA" allowfullscreen></iframe></div>
     
     <h2>Contributions</h2>
     <ol>
-      <li><a href="http://wiki.ros.org/">Robot Operating System (ROS)</a> <i>rosbag</i> files recorded from four sensors including a 3D lidar, two RGB-D cameras and a stereo camera, while all the sensory data are synchronized at the software level (i.e. timestamped by ROS), and the robot pose in the world reference frame are provided.</li>
-      <li>Data collection was carried out with the real FLOBOT prototype, in real environments including airport, warehouse, hospital and supermarket. While these public places are rarely to obtain permission to perform data collection especially with robots.</li>
+      <li><a href="http://wiki.ros.org/">Robot Operating System (ROS)</a> <i>rosbag</i> files recorded from four sensors including a 3D lidar, two RGB-D cameras and a stereo camera, and the robot pose in the world reference frame are provided. All the sensory data are synchronized at the software level (i.e. time stamped by ROS).</li>
+      <li>Data collection was carried out with the real FLOBOT prototype, in real environments including airport, warehouse and supermarket. While these public places are rarely to obtain permission to perform data collection especially with robots.</li>
       <li>Annotation of pedestrian in 3D lidar, dirt and object in RGB-D camera are provided.</li>
-      <li>Baselines based on relevant state-of-the-art, i.e. for human, dirt and object detection, are provided.</li>
-      <li>Although not our main use, since the dataset provides robot odometry and TF tree rising up to "world", it is also suitable for the study of localization and mapping problems. Moreover, as our data involves many different and very characteristic public scenarios (i.e. airport, warehouse, hospital and supermarket), it is also suitable for semantic and contextual research.</li>
+      <li>Baselines for human detection and tracking as well as dirt and object detection are provided.</li>
+      <li>Although not our main use, since the dataset provides also robot pose in the world reference frame, it can be used for localization and mapping problems. Moreover, as our data involves very characteristic public scenarios (i.e. airport, warehouse and supermarket), it is also suitable for semantic and contextual study.</li>
     </ol>
     
     <h2>Citation</h2>
@@ -67,7 +67,6 @@
 	<td><img alt="airport.jpg" height="168" src="images/airport.jpg"></td>
 	<td><img alt="warehouse.jpg" height="168" src="images/warehouse.jpg"></td>
 	<td><img alt="supermarket.jpg" height="168" src="images/supermarket.jpg"></td>
-	<td><img alt="hospital.jpg" height="168" src="images/hospital.jpg"></td>
       </tr>
       <tr>
 	<td>Airport</td>
@@ -91,7 +90,6 @@
       <tr> <td>2018-06-13</td> <td>16:11-16:17 (5:05s)</td> <td>Lyon (airport)</td> <td>Velodyne / Xtion (depth)</td> <td>Human tracking</td> <td>airport-2018-06-13-16-11-56.bag</td> </tr>
       <tr> <td>2018-06-13</td> <td>16:20-16:23 (2:26s)</td> <td>Lyon (airport)</td> <td>Velodyne / Xtion (depth)</td> <td>Human tracking</td> <td>airport-2018-06-13-16-20-34.bag</td> </tr>
       <tr> <td>2018-06-13</td> <td>16:37-16:42 (4:28s)</td> <td>Lyon (airport)</td> <td>Velodyne / Xtion (depth)</td> <td>Human tracking</td> <td>airport-2018-06-13-16-37-32.bag</td> </tr>
-      <tr> <td>2018-06-29</td> <td>12:31-12:35 (4:18s)</td> <td>Imola (hospital)</td> <td>Velodyne</td> <td>Human tracking</td> <td>hostpital-2018-06-29-12-31-26-velodyne-only.bag</td> </tr>
     </table>
     
     <h2>How to play</h2>
