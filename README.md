@@ -46,3 +46,8 @@ If you are considering using this repository, please reference the following:
 ```
 manuscript in preparation ...
 ```
+
+## Related development
+
+* [https://github.com/LCAS/online_learning](https://github.com/LCAS/online_learning)
+* [https://github.com/LCAS/cloud_annotation_tool](https://github.com/LCAS/cloud_annotation_tool)
