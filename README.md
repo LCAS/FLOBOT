@@ -2,7 +2,7 @@
 
 [FLOBOT](http://www.flobot.eu/) is an EU funded Horizon 2020 project. The University of Lincoln is responsible for developing the human tracking for safety software module, and leadnig the environment reasoning and learning software module. In this repository, you find these two modules as a whole, and specifically:
 
-* [bayestracking](\bayestracking) is a library originally developed by [Dr. Nicola Bellotto](http://webpages.lincoln.ac.uk/nbellotto/).
+* [bayestracking](bayestracking) is a library originally developed by [Dr. Nicola Bellotto](http://webpages.lincoln.ac.uk/nbellotto/).
 
 * [detector_msg_to_pose_array](\detector_msg_to_pose_array), [ground_plane_estimation](\ground_plane_estimation), and [upper_body_detector](\upper_body_detector) was originally developed for [STRANDS](http://strands.acin.tuwien.ac.at/) project.
 
