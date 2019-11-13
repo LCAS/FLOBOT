@@ -31,7 +31,6 @@
       <li><a href="http://wiki.ros.org/">Robot Operating System (ROS)</a> <i>rosbag</i> files recorded from four sensors including a 3D lidar, two RGB-D cameras and a stereo camera, and the robot pose in the world reference frame are provided. All the sensory data are synchronized at the software level (i.e. time stamped by ROS).</li>
       <li>Data collection was carried out with the real FLOBOT prototype, in real environments including airport, warehouse and supermarket. While these public places are rarely to obtain permission to perform data collection especially with robots.</li>
       <li>Annotation of pedestrian in 3D lidar, dirt and object in RGB-D camera are provided.</li>
-      <li>Baselines for human detection and tracking as well as dirt and object detection are provided.</li>
       <li>Although not our main use, since the dataset provides also robot pose in the world reference frame, it can be used for localization and mapping problems. Moreover, as our data involves very characteristic public scenarios (i.e. airport, warehouse and supermarket), it is also suitable for semantic and contextual study.</li>
     </ol>
     
@@ -93,10 +92,7 @@
     
     <h2>How to play</h2>
     
-    <p><i>roslaunch <a href="https://github.com/LCAS/FLOBOT/tree/baselines/flobot_dataset_play.launch">flobot_dataset_play.launch</a> bag:=path_to_your_rosbag</i></p>
-    
-    <h2>Baselines</h2>
-    <p><a href="https://github.com/LCAS/FLOBOT/tree/baselines">https://github.com/LCAS/FLOBOT/tree/baselines</a></p>
+    <p><i>roslaunch <a href="https://lcas.lincoln.ac.uk/owncloud/index.php/s/7en7ugoKy5YPZxA">flobot_dataset_play.launch</a> bag:=path_to_your_rosbag</i> (<a href="https://lcas.lincoln.ac.uk/owncloud/index.php/s/qlgMApVrGFWdPUo">rviz config here</a></p>
 
     <h2>Open source</h2>
     <ul>
