@@ -25,14 +25,14 @@ typedef struct feature {
   float min_distance;
   Eigen::Matrix3f covariance_3d;
   Eigen::Matrix3f moment_3d;
-  //float partial_covariance_2d[9];
-  //float histogram_main_2d[98];
-  //float histogram_second_2d[45];
-  float slice[20];
+  // float partial_covariance_2d[9];
+  // float histogram_main_2d[98];
+  // float histogram_second_2d[45];
+  float slice[30];
   float intensity[27];
 } Feature;
 
-static const int FEATURE_SIZE = 61;
+static const int FEATURE_SIZE = 71;
 
 class Object3dDetector {
 private:
@@ -42,6 +42,7 @@ private:
   ros::Publisher pose_array_pub_;
   ros::Publisher marker_array_pub_;
   
+  /*** Parameters ***/
   bool print_fps_;
   std::string frame_id_;
   float z_limit_min_;
@@ -49,6 +50,7 @@ private:
   int cluster_size_min_;
   int cluster_size_max_;
   
+  /*** SVM ***/
   std::vector<Feature> features_;
   std::string model_file_name_;
   std::string range_file_name_;
@@ -151,7 +153,7 @@ void Object3dDetector::pointCloudCallback(const sensor_msgs::PointCloud2::ConstP
 }
 
 const int nested_regions_ = 14;
-int zone_[nested_regions_] = {2,3,3,3,3,3,3,2,3,3,3,3,3,3}; // for more details, see our IROS'17 paper.
+int zone_[nested_regions_] = {2,3,3,3,3,3,3,2,3,3,3,3,3,3}; // For more details, please check our IROS17 paper.
 void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
   features_.clear();
   
@@ -170,8 +172,8 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
 	pc->points[(*pc_indices)[i]].y * pc->points[(*pc_indices)[i]].y +
 	pc->points[(*pc_indices)[i]].z * pc->points[(*pc_indices)[i]].z;
       if(d2 > range*range && d2 <= (range+zone_[j])*(range+zone_[j])) {
-      	indices_array[j].push_back((*pc_indices)[i]);
-      	break;
+	indices_array[j].push_back((*pc_indices)[i]);
+	break;
       }
       range += zone_[j];
     }
@@ -234,8 +236,6 @@ void Object3dDetector::extractCluster(pcl::PointCloud<pcl::PointXYZI>::Ptr pc) {
  * f7 (45d): The normalized 2D histogram for the secondary plane, 9 × 5 bins.
  * f8 (20d): Slice feature for the cluster.
  * f9 (27d): Intensity.
- * @todo taking VLP-16's properties into account: distance_between_slice = f1(channels (16), accuracy, distance, angular) * f2(DistanceThreshold, ClusterTolerance)
- * @todo height, width, head area, ratio of body height and width, etc ...
  */
 
 void computeMomentOfInertiaTensorNormalized(pcl::PointCloud<pcl::PointXYZI> &pc, Eigen::Matrix3f &moment_3d) {
@@ -342,19 +342,27 @@ void computeSlice(pcl::PointCloud<pcl::PointXYZI>::Ptr pc, int n, float *slice) 
       blocks[j]->points.push_back(pc->points[i]);
     }
     
-    Eigen::Vector4f block_min, block_max;
+    Eigen::Vector4f block_min, block_max, block_centroid;
     for(int i = 0; i < n; i++) {
       if(blocks[i]->size() > 0) {
+	// pcl::PCA<pcl::PointXYZI> pca;
+	// pcl::PointCloud<pcl::PointXYZI>::Ptr block_projected(new pcl::PointCloud<pcl::PointXYZI>);
+	// pca.setInputCloud(blocks[i]);
+	// pca.project(*blocks[i], *block_projected);
+	
 	pcl::getMinMax3D(*blocks[i], block_min, block_max);
+	pcl::compute3DCentroid(*blocks[i], block_centroid);
       } else {
 	block_min.setZero();
 	block_max.setZero();
+	block_centroid.setZero();
       }
       slice[i*2] = block_max[0] - block_min[0];
       slice[i*2+1] = block_max[1] - block_min[1];
+      slice[i+20] = block_centroid[0]*block_centroid[0] + block_centroid[1]*block_centroid[1] + block_centroid[2]*block_centroid[2];
     }
   } else {
-    for(int i = 0; i < n*2; i++)
+    for(int i = 0; i < 30; i++)
       slice[i] = 0;
   }
 }
@@ -444,20 +452,20 @@ void Object3dDetector::saveFeature(Feature &f, struct svm_node *x) {
   //   x[i+14].value = f.partial_covariance_2d[i];
   // }
   // for(int i = 0; i < 98; i++) {
-  // 	x[i+23].index = i+24;
-  // 	x[i+23].value = f.histogram_main_2d[i];
+  //   x[i+23].index = i+24;
+  //   x[i+23].value = f.histogram_main_2d[i];
   // }
   // for(int i = 0; i < 45; i++) {
-  // 	x[i+121].index = i+122;
-  // 	x[i+121].value = f.histogram_second_2d[i];
+  //   x[i+121].index = i+122;
+  //   x[i+121].value = f.histogram_second_2d[i];
   // }
-  for(int i = 0; i < 20; i++) {
+  for(int i = 0; i < 30; i++) {
     x[i+14].index = i+15;
     x[i+14].value = f.slice[i];
   }
   for(int i = 0; i < 27; i++) {
-    x[i+34].index = i+35;
-    x[i+34].value = f.intensity[i];
+    x[i+44].index = i+45;
+    x[i+44].value = f.intensity[i];
   }
   x[FEATURE_SIZE].index = -1;
   
@@ -466,7 +474,7 @@ void Object3dDetector::saveFeature(Feature &f, struct svm_node *x) {
   //   std::cerr << std::endl;
   // }
 }
-  
+
 void Object3dDetector::classification() {
   visualization_msgs::MarkerArray marker_array;
   geometry_msgs::PoseArray pose_array;

@@ -355,8 +355,9 @@ void PeopleTracker::publishTrajectory(std::vector<geometry_msgs::Pose> poses,
   
   /*** clean up ***/
   for(int i = 0; i < previous_poses.size(); i++) {
-    if(boost::get<0>(previous_poses[i]) == INVALID_ID)
+    if(boost::get<0>(previous_poses[i]) == INVALID_ID) {
       previous_poses.erase(previous_poses.begin()+i);
+    }
   }
   
   /*** add new coming poses to the previous_poses list ***/  
