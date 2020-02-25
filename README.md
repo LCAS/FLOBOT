@@ -53,7 +53,7 @@ If you are considering using this repository, please reference the following:
    url = {http://arxiv.org/abs/2002.10158},
    archivePrefix = {arXiv},
    eprint = {2002.10158}
-} 
+}
 ```
 
 ## Related development
