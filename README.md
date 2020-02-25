@@ -44,11 +44,16 @@ $ roslaunch flobot_tracker_bringup flobot_tracker.launch
 If you are considering using this repository, please reference the following:
 
 ```
-@misc{zhimon2020,
+@article{zhimon2020,
    author = {Zhi Yan and Simon Schreiberhuber and Georg Halmetschlager and Tom Duckett and Markus Vincze and Nicola Bellotto},
    title = {Robot Perception of Static and Dynamic Objects with an Autonomous Floor Scrubber},
-   year = {2020}
-}
+   journal = {CoRR},
+   volume = {abs/2002.10158},
+   year = {2020},
+   url = {http://arxiv.org/abs/2002.10158},
+   archivePrefix = {arXiv},
+   eprint = {2002.10158}
+} 
 ```
 
 ## Related development
