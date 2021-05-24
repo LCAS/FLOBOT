@@ -45,14 +45,14 @@ If you are considering using this repository, please reference the following:
 
 ```
 @article{zhimon2020,
-   author = {Zhi Yan and Simon Schreiberhuber and Georg Halmetschlager and Tom Duckett and Markus Vincze and Nicola Bellotto},
-   title = {Robot Perception of Static and Dynamic Objects with an Autonomous Floor Scrubber},
-   journal = {CoRR},
-   volume = {abs/2002.10158},
-   year = {2020},
-   url = {http://arxiv.org/abs/2002.10158},
-   archivePrefix = {arXiv},
-   eprint = {2002.10158}
+  author  = {Z. Yan and S. Schreiberhuber and G. Halmetschlager and T. Duckett and M. Vincze and N. Bellotto},
+  title   = {Robot perception of static and dynamic objects with an autonomous floor scrubber},
+  journal = {Intelligent Service Robotics},
+  year    = {2020},
+  volume  = {13},
+  number  = {3},
+  pages   = {403-417},
+  doi     = {https://doi.org/10.1007/s11370-020-00324-9}
 }
 ```
 
